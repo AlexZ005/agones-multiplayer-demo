@@ -9,7 +9,7 @@ Agones (CRD for K8s), Go, NodeJS, MySQL, Websockets
 Here is a description of each file:
 
 * **README.md**: This file provides an overview of the project and describes how to get started.
-* **agones-game-launcher**: web application written in Go for starting gameservers 
+* **game-launcher**: web application written in Go for starting gameservers 
   * Dockerfile: This file contains the instructions for building the Docker image
   * game-server-create.go: This file contains the code that is used to start a game server instance
 
@@ -150,6 +150,13 @@ docker context use server
 scp root@192.168.88.199:/root/.kube/config %APPDATA%\..\..\.kube\config
 ```
 
+**NOTE:** make sure to change server IP address inside config if using minikube  
+>Line 5:     server: https://[MINIKUBE_IP]:8443   
+
+# Game Launcher
+
+Acess game-launcher folder and execute steps below.  
+
 ## Generate certificates
 ``` Bash
 cd certs-ssl
@@ -157,15 +164,27 @@ openssl genrsa -des3 -out server.key 2048
 openssl rsa -in server.key -out server.key
 openssl req -sha256 -new -key server.key -out server.csr -subj "/CN=localhost"
 openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+cd ..
 ```
 
-## Build agones-game-launcher
+## Copy config from .kube folder
+copy %APPDATA%\..\..\.kube\config .\
+
+**NOTE:** if kubernetes certificate data is used as files as it does in minikube, they also need to be copied and config file need to be modified to use them and Dockerfile need to be adjusted to copy these files into the image:  
+```
+cp %APPDATA%\..\..\.minikube\ca.crt .  
+cp %APPDATA%\..\..\.minikube\profiles\minikube\client.crt .  
+cp %APPDATA%\..\..\.minikube\profiles\minikube\client.key .  
+```
+
+## Build game-launcher
 ``` bash
 set startTime=%time%
-set GOOS=linux
-go build -v -o main
-docker build -t agones-game-launcher .
+go mod init && go mod tidy
+cd game-launcher
+set GOARCH=amd64&& set GOOS=linux&& go build -v -o main
+docker build -t game-launcher .
 ssh root@192.168.88.199 ^
-^"docker save agones-game-launcher -o agones-game-launcher.tar ^&^&^
-ctr -n=k8s.io images import agones-game-launcher.tar^" && echo Start Time: %startTime% && echo Finish time: %time% && kubectl delete -f pod.yaml && kubectl apply -f pod.yaml
+ ^"docker save game-launcher -o game-launcher.tar ^&^&^
+ ctr -n=k8s.io images import game-launcher.tar^" && echo Start Time: %startTime% && echo Finish time: %time% && kubectl delete -f launcher.yaml && kubectl apply -f launcher.yaml
 ```

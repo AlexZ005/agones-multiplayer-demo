@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Game Server Create</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" type="image/x-icon" href="/static/favico.ico">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script>
+    // When the user clicks on <div>, open the popup
+    function popupTextAlt() {
+      var popup = document.getElementById("myPopup");
+      popup.classList.toggle("show");
+    }
+
+    // https://www.w3schools.com/howto/howto_js_dropdown.asp
+    /* When the user clicks on the button, 
+    toggle between hiding and showing the dropdown content */
+    function dropdown() {
+      document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropdown')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+    </script>
+
+</head>
+<body>
+
+  <div class="bg-image img1">
+    <div id="navbar">
+      <div id="login">
+        {{if .nickname}}
+        <!-- <a href="/user" id="login">{{ .nickname }}</a> -->
+        <div class="dropdown">
+          <button onclick="dropdown()" class="dropdown">{{ .nickname }}
+            <span><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="css-dark-0"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+
+          </button>
+          <div id="myDropdown" class="dropdown-content">
+            <a href="/designer">Designer mode</a>
+            <a href="/rooms#private">My rooms</a>
+            <!-- <a href="#about">Design</a> -->
+            <a href="/profile">Profile</a>
+          </div>
+        </div>
+        <button id="login" onclick="window.location.href='/logout'" type="submit">Logout</button>
+        {{else}}
+        <button id="login" onclick="window.location.href='/login'" type="submit">Login</button>
+        {{end}}
+      </div>
+      <div id="room-code">
+        
+        <input type="text" id="game-room-code" placeholder="Enter room code">
+        <button type="button" name="Join" id="join-button">JOIN</button>
+        <button id="login" onclick="window.location.href='/'" type="submit">&#8202;<i class="fa fa-home"></i>&#8202;</button>
+        <button id="login" onclick="window.location.href='/rooms'" type="submit">Rooms</button>
+        <button id="login" onclick="window.open('https\:\/\/vrvsvr.com/docs', '_blank')">Docs</button>
+
+      </div>
+    </div>
+    <div class="name-text" id="start-button">    
+    </div>
+    
+    <div class="bg-text" id="start-button">    
+      <button id="create-button" class="menu btn-custom btn-large" name="Start Quest">Create Server</button>
+    </div>
+    <div id="server-info" class="modal">
+      <div class="modal-content">
+        <!-- <span class="close">&times;</span> -->
+        <p id="border" style="display: none;"></p>
+        <p id="start">Generating request ...</p>
+        <p id="status-create"></p>
+      </div>
+    </div>
+    
+    <div class="container" id="container">
+      <p id="status-result"></p>
+      <p id="game-details" style="display: none;">
+        <button target="_blank" id="access-room" style="display: none;">&#10064;</button> 
+        <button target="_blank" id="shutdown-room" style="display: none;">&#10064;</button> 
+      </p>
+      <iframe id="viewer" name="viewer" srcdoc="<p style='color: white'>Loading...</p>" scrolling="no" allow="fullscreen; xr-spatial-tracking;">
+        <p>The browser does not support iframes or there was an error, try accessing room by code.</p></iframe>
+    </div>
+<p class="bottom-text"><a href="#section2">&#10504; Scroll for more details</a></p>
+</div>
+
+<div class="bg-image img2" id="section2">
+
+
+<h1>Create Game Servers</h1>
+
+<p>Make shared room with a click of a button</p>
+<p>Play with friends by sharing the link</p>
+</div>
+
+<script>
+  // Get the modal
+  var modal = document.getElementById("server-info");
+  
+  // Get the button that opens the modal
+  var btn = document.getElementById("create-button");
+
+  // When the user clicks the button, open the modal 
+  btn.onclick = function() {
+    createGameServer(this.name);
+    modal.style.display = "block";
+  }
+  </script>
+  
+  <script>
+    function createGameServer(name) {
+      document.getElementById('start-button').style.display = 'none';
+      document.getElementById('status-create').innerHTML = "Creating a game server..."
+
+      const wait = ms =>
+  new Promise(resolve => setTimeout(resolve, ms))
+;
+
+const watch = async (predicate, ms) => {
+  for (;; await wait(ms)) {
+    const result = await predicate();
+    
+    if (result) {
+      return result;
+    }
+  }
+};
+
+/* mock the API for demonstration purposes */
+const checkOrderStatus = (() => {
+  let calls = 0;
+  return async () => ({
+    status: document.getElementById('status-result').innerHTML != "" ? "FILLED" : false
+  });
+})();
+
+const watchFill = (asset, orderId) =>
+  watch(async () => {
+    const {status} = await checkOrderStatus();
+
+    
+    if(document.getElementById('status-create').innerHTML == "Creating a game server."){
+    document.getElementById('status-create').innerHTML = "Creating a game server..";
+  } else if(document.getElementById('status-create').innerHTML == "Creating a game server.."){
+    document.getElementById('status-create').innerHTML = "Creating a game server...";
+  } else if(document.getElementById('status-create').innerHTML == "Creating a game server..."){
+    document.getElementById('status-create').innerHTML = "Creating a game server.";
+  }
+
+    console.log(`Order status: ${status}`);
+    return status === "CANCELLED" ? false : status === "FILLED";
+  }, 1000)
+;
+
+const sellOrder = async () => {
+  try {
+    const orderIsFilled = await watchFill();
+    console.log("orderIsFilled:", orderIsFilled);
+  }
+  catch (err) {
+    console.error('Err sellIfFilled() :', err);
+  }
+};
+sellOrder();
+      
+//       do {
+        
+//         setTimeout(() => { document.getElementById('status-create').innerHTML = "Creating game server."; console.log('1 second passed'); }, 1000);
+//         setTimeout(() => { document.getElementById('status-create').innerHTML = "Creating game server.."; console.log('2 seconds passed'); }, 2000);
+//         setTimeout(() => { document.getElementById('status-create').innerHTML = "Creating game server..."; console.log('3 seconds passed'); }, 3000);
+// }
+
+//       while(document.getElementById('status-result').innerHTML != "");
+
+      buttonsStatus(true);
+      fetch('/create-game-server', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: name
+        })
+      }).then(response => response.json()).then(data => {
+        const gamePort = data;
+        document.getElementById('status-result').innerHTML = "<button id=\"game-port-button\"><span id=\"game-port\">"+gamePort+"</span> &#x1f4cb;</button><div id=\"makePopup\" class=\"popup\"><span class=\"popuptext\" id=\"myPopup\">Copied to clipboard!</span></div>";
+        var a = document.getElementById('access-room'); //or grab it by tagname etc
+        var b = document.getElementById('shutdown-room'); //or grab it by tagname etc
+        a.disabled = false;
+        b.disabled = false;
+        // a.style.backgroundColor = "#4CAF50";
+        a.style.color = "white";
+        // a.style.border = "1px solid #4CAF50";
+        b.style.backgroundColor = "#f44336";
+        b.style.color = "white";
+        b.style.border = "1px solid #f44336";
+
+        // Add code to copy into the clipboard game-port value
+        gamePortButton = document.getElementById('game-port-button');
+        gamePortElement = document.getElementById('game-port');
+        gamePortButton.addEventListener('click', () => {
+          navigator.clipboard.writeText(window.location.href+gamePortElement.textContent);
+          let color = gamePortButton.style.backgroundColor
+          gamePortButton.style.backgroundColor = "#ccc";
+          popupTextAlt()
+          setTimeout(() => {
+            gamePortButton.style.backgroundColor = color;
+          }, 250);
+        });
+
+        document.getElementById('game-details').style.display = 'block';
+        document.getElementById('server-info').style.display = 'none';
+        document.getElementById('container').style.display = 'block';
+        const viewer = document.getElementById( 'viewer' );
+        viewer.removeAttribute("srcdoc")
+        viewer.setAttribute("src",window.location.href + gamePort);
+        console.log(data);
+
+        const test = document.getElementById("makePopup");
+        test.addEventListener("mouseout",
+            (event) => {
+              // reset the color after a short delay
+              setTimeout(() => {
+                var popup = document.getElementById("myPopup");
+                popup.classList.toggle("show");
+              }, 1000);
+            },
+            false,
+        );
+      });
+    }
+
+    //TESTS
+    // document.getElementById('status-result').innerHTML = "<button id=\"game-port-button\"><span id=\"game-port\">12345</span> &#x1f4cb;</button><div id=\"makePopup\" class=\"popup\"><span class=\"popuptext\" id=\"myPopup\">Copied to clipboard!</span></div>";
+    // popupTextAlt()
+    // document.getElementById('game-details').style.display = 'block';
+    //     document.getElementById('server-info').style.display = 'none';
+    //     document.getElementById('container').style.display = 'block';
+    //     const viewer = document.getElementById( 'viewer' );
+    //     viewer.removeAttribute("srcdoc")
+    //     viewer.setAttribute("src","https://crafts.servegame.com:444/x7fd7");
+    // const joinButton = document.getElementById("join-button");
+    // // console.log(joinButton);
+    // joinButton.addEventListener("click", () => {
+    //   window.location.href = "/" + document.getElementById("game-room-code").value;
+    // });
+
+    const accessButton = document.getElementById("access-room");
+    // console.log(joinButton);
+    accessButton.addEventListener("click", () => {
+      window.open(window.location.href + document.getElementById("game-port").textContent);
+    });
+
+    const shutdownButton = document.getElementById("shutdown-room");
+    // console.log(joinButton);
+    shutdownButton.addEventListener("click", () => {
+      window.open(window.location.href + document.getElementById("game-port").textContent + "/shutdown");
+      var a = document.getElementById('access-room'); //or grab it by tagname etc
+      var b = document.getElementById('shutdown-room'); //or grab it by tagname etc
+
+      a.disabled = true;
+      a.style.backgroundColor = "#ccc";
+      a.style.color = "#666";
+      a.style.border = "1px solid #ccc";
+      b.disabled = true;
+      b.style.backgroundColor = "#ccc";
+      b.style.color = "#666";
+      b.style.border = "1px solid #ccc";
+
+      document.getElementById('game-details').style.display = 'block';
+      document.getElementById('status').innerHTML = "The game server " + document.getElementById("game-port").textContent + " has been shutdown.";
+      buttonsStatus(false);
+    });
+
+    function buttonsStatus(condition) {
+      buttons = document.getElementsByClassName('menu')
+      for (var i = 0; i < buttons.length; i++) {
+        if(condition){
+          buttons.item(i).style.backgroundColor = "#ccc";
+          buttons.item(i).style.color = "#666";
+        }
+        else {
+          buttons.item(i).style.backgroundColor = "#000";
+          buttons.item(i).style.color = "white";
+        }
+        buttons.item(i).disabled = condition;
+      }
+    }
+  </script>
+</body>
+</html>
+

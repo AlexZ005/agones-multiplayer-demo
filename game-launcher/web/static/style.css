@@ -1,0 +1,526 @@
+@import "popup.css";
+@import "buttons.css";
+
+html {
+  height: 100%;
+  margin: 0;
+  scroll-behavior: smooth;
+}
+
+#section1 {
+  height: 100%;
+  background-color: pink;
+}
+
+#section2 {
+  height: 100%;
+  /* background-color: yellow; */
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #000;
+    background-repeat: no-repeat;
+    background-position: top;
+    background-attachment: fixed;
+    height: 100%;
+    margin: 0;
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+
+  }
+
+  body::-webkit-scrollbar {
+    width: 10px;
+    background-color: #666;
+    display: none;  /* Safari and Chrome */
+  }
+  
+  body::-webkit-scrollbar-thumb {
+    /* background-color: #ccc; */
+  }
+
+  /* Style the tab */
+.tab {
+  overflow: hidden;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  /* background-color: #ddd; */
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #333;
+}
+  /* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  /* border: 1px solid #ccc; */
+  border-top: none;
+}
+  .designer-options {
+    position:relative;
+  padding-top: 10px; /* Location of the box */
+  padding-left: 10px; /* Location of the box */
+  height: 80%;
+  width: 70%;
+  left: 50%; /* Full height */
+  transform: translate(-50%, 0%);
+  text-align: left;
+  overflow: auto; /* Enable scroll if needed */
+}
+
+.designer {
+  background-color: #d7d1d1;
+  padding: auto;
+  padding: 10px;
+  border:hsl(from color h s l);
+  /* cursor: pointer;   */
+  border-radius: 5px;
+  border-color: #fff;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 2px 0 rgba(0, 0, 0, 0.24);
+}
+
+.designer-options select {
+  background-color: #d7d1d1;
+  padding: auto;
+  padding: 10px;
+  color: #000;
+  border:hsl(from color h s l);
+  /* cursor: pointer;   */
+  border-radius: 5px;
+  border-color: #fff;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0,)
+  }
+
+  #icon {
+    /* width:50px; */
+    height: auto"
+  }
+
+  .name-text {
+    text-align: center;
+    top: 25%;  
+    left: 50%; /* Full height */
+    transform: translate(-50%, -50%);
+  
+    color:#ccc;
+    position: absolute;
+  }
+
+  /* Position start button in the middle of the page */
+  .bg-text {
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0, 0.4); /* Black w/opacity/see-through */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 300px;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  /* Position start button in the middle of the page */
+  .bg-rooms-text {
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0, 0.4); /* Black w/opacity/see-through */
+      /* position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      width: 300px;
+      padding: 20px; */
+    text-align: center;
+
+    position:relative;
+    padding-top: 10px; /* Location of the box */
+    height: 80%;
+    width: 70%;
+    max-width: 1492px;
+    /* top: 70px; */
+    /* top: 50%;  */
+    top: clamp(70px, 10%, 50%);
+    left: 50%; /* Full height */
+    transform: translate(-50%, 0%);
+
+    overflow: auto; /* Enable scroll if needed */
+  }
+
+
+  .bg-rooms-text::-webkit-scrollbar {
+    width: 10px;
+    background-color: #666;
+  }
+
+  .bg-rooms-text::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+  }
+
+  .rooms-table{
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .rooms-table tr {
+    background-color: #ccc;
+    color: #000;
+    padding: 10px;
+  }
+
+  .rooms-table tr:hover {
+    background-color: #ddd;
+  }
+
+  .rooms-table th {
+    background-color: #000;
+    color: #fff;
+    padding: 10px;
+  }
+
+  .rooms-table td {
+    padding: 10px;
+  }
+
+  .rooms-table a {
+    color: #000;
+  }
+
+  .rooms-table a:hover {
+    color: #fff;
+  }
+
+  .rooms-table button {
+    background-color: #000;
+    color: #fff;
+    padding: 10px;
+    border: 1px solid #000;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .rooms-table button:hover {
+    background-color: #fff;
+    color: #000;
+  }
+
+  .rooms-table button.access {
+    background-color: #4CAF50;
+  }
+
+  .rooms-table button.delete {
+    background-color: #f44336;
+  }
+
+  .rooms-table button.access:hover {
+    background-color: #fff;
+    color: #4CAF50;
+  }
+
+  .rooms-table button.delete:hover {
+    background-color: #fff;
+    color: #f44336;
+  }
+
+  .rooms-table button.access:active {
+    background-color: #4CAF50;
+    color: #fff;
+  }
+
+  .rooms-table button.delete:active {
+    background-color: #f44336;
+    color: #fff;
+  }
+
+  .rooms-table button.access:visited {
+    background-color: #4CAF50;
+    color: #fff;
+  }
+    
+  .bg-image {
+    /* Full height */  
+    height: 100%; 
+    
+    /* Show bg from top */
+    background-position: top;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  /* Background images */
+  .img1 { background-image: url("/static/bg-start.png"); }
+
+  .bottom-text{
+    text-align: center;
+    left: 50%; /* Full height */
+    transform: translate(-50%, -50%);
+
+    color:#ccc;
+    position: absolute;
+    bottom: 0;
+
+    a {
+      color: #ccc;
+    }
+  }
+
+  h1 {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    /* light text color with shadow */
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12), 0 2px 0 rgba(0, 0, 0, 0.24); 
+  }
+
+  button.menu {
+    display: block;
+    margin: 0 auto;
+    /* margin-bottom: 20px; */
+    padding: 10px 50px;
+    /* background-color: #22b72c;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    transition: all 0.3s ease-in-out; */
+  }
+  
+  button:hover {
+    background-color: #333;
+  }
+  
+  p {
+    /* text-align: center; */
+    color: #ccc
+  }
+  
+  a {
+    text-decoration: none;
+    color: #ccc;
+  }
+  
+  a:hover {
+    color: #333;
+  }
+  #navbar {
+    /* background-color: #333; */
+    position: relative;
+    /* top: -50px; */
+    max-width: 1792px;
+    margin: auto;
+    width: 100%;
+    display: block;
+    transition: top 0.3s;
+  }
+
+  div#login {
+    right: 0;
+    position: absolute;
+    /* max-width: 1792px; */
+    /* position: absolute; */
+    /* display: block; */
+    margin: 0 auto;
+    /* margin-bottom: 20px; */
+    padding: 10px 20px;
+    background-color: transparent;
+  }
+
+  #room-code {
+    left: 0;
+    position: absolute;
+    /* max-width: 1792px; */
+    /* position: absolute; */
+    margin: 0 auto;
+    display: block;
+    margin: 0 auto;
+    /* margin-bottom: 20px; */
+    padding: 10px 20px;
+    background-color: transparent;
+
+    input {
+      background-color: #d7d1d1;
+      padding: auto;
+      padding: 10px;
+      /* text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12), 0 2px 0 rgba(0, 0, 0, 0.24); */
+      /* text colour white */ 
+      color: #000;
+      border:hsl(from color h s l);
+      /* cursor: pointer;   */
+      border-radius: 5px;
+      border-color: #fff;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 2px 0 rgba(0, 0, 0, 0.24);
+    }
+    
+    /* display: block; */
+  }
+
+  p#border {
+    margin: 0 auto;
+    display: block;
+    padding: 10px 20px;
+    background-color: #000;
+  }
+
+  /* gray button colors */
+  #access-room, #shutdown-room {
+    margin-top: 10px;
+    display: inline-block;
+    background-color: #ccc;
+    color: #666;
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  a#login {
+    position: relative;
+    top: 0;
+    right: 0;
+    margin: 0px;
+    padding: 10px;
+    background-color: #000;
+    color: white;
+    border: 1px solid #000;
+  }
+
+  /* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position:relative; /* Stay in place */
+  z-index: 3; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  height: 50%;
+  width: 70%;
+  /* top: 70px; */
+  /* top: 50%;  */
+  top: clamp(70px, 25%, 50%);
+  left: 50%; /* Full height */
+  transform: translate(-50%, 0%);
+
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #321f1f;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+div.container {
+  display: none;
+  position:relative; /* Stay in place */
+  z-index: 5; /* Sit on top */
+  padding-top: 10px; /* Location of the box */
+  height: 80%;
+  width: 80%;
+  /* top: 70px; */
+  /* top: 50%;  */
+  top: clamp(70px, 25%, 10%);
+  left: 50%; /* Full height */
+  transform: translate(-50%, 0%);
+
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  overflow: hidden;
+}
+
+#viewer {
+position: relative;
+height: 90%;
+width: 90%;
+top: 50%;
+left: 50%; /* Full height */
+transform: translate(-50%, -50%);
+}
+
+#game-details {
+  position: absolute;
+  z-index: 6;
+  /* right: 0; */
+  height: 90%;
+  top: 30px;
+  right: 100px;
+}
+
+#status-result {
+  position: absolute;
+  z-index: 6;
+  padding-top: 20px;
+  /* right: 0; */
+  height: 90%;
+  top: 50%;
+  left: 50%; /* Full height */
+  transform: translate(-50%, -50%);
+}
+
+
+/* Profile dropdown from W3C*/
+
+.dropbtn {
+  background-color: #3498DB;
+  color: white;
+  padding: 16px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+.dropbtn:hover, .dropbtn:focus {
+  background-color: #2980B9;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  overflow: auto;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown a:hover {background-color: #ddd;}
+
+.show {display: block;}

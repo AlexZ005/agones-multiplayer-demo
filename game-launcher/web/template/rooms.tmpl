@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ .title }}</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" type="image/x-icon" href="/static/favico.ico">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script>
+    // When the user clicks on <div>, open the popup
+    function popupTextAlt() {
+      var popup = document.getElementById("myPopup");
+      popup.classList.toggle("show");
+    }
+    // https://www.w3schools.com/howto/howto_js_dropdown.asp
+    /* When the user clicks on the button, 
+    toggle between hiding and showing the dropdown content */
+    function dropdown() {
+      document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    function openTab(evt, cityName) {
+      // Declare all variables
+      var i, tabcontent, tablinks;
+
+      // add cityName to hash lowecase
+      window.location.hash = cityName.toLowerCase();
+
+      // Get all elements with class="tabcontent" and hide them
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+
+      // Get all elements with class="tablinks" and remove the class "active"
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+
+      // Show the current tab, and add an "active" class to the button that opened the tab
+      document.getElementById(cityName).style.display = "block";
+      evt.currentTarget.className += " active";
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropdown')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+    </script>
+
+</head>
+<body>
+
+  <div class="bg-image img1">
+    <div id="navbar">
+      <div id="login">
+        {{if .nickname}}
+        <!-- <a href="/user" id="login">
+
+
+        </a> -->
+        <div class="dropdown">
+          <button onclick="dropdown()" class="dropdown">{{ .nickname }}
+            <span><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="css-dark-0"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+
+          </button>
+          <div id="myDropdown" class="dropdown-content">
+            <a href="/designer">Designer mode</a>
+            <a  onclick="document.getElementById('private').click();">My rooms</a>
+            <!-- <a href="#about">Design</a> -->
+            <a href="/profile">Profile</a>
+          </div>
+        </div>
+        <button id="login" onclick="window.location.href='/logout'" type="submit">Logout</button>
+        {{else}}
+        <button id="login" onclick="window.location.href='/login'" type="submit">Login</button>
+        {{end}}
+      </div>
+      <div id="room-code">
+        
+        <input type="text" id="game-room-code" placeholder="Enter room code">
+        <button type="button" name="Join" id="join-button">JOIN</button>
+        <button id="login" onclick="window.location.href='/'" type="submit">&#8202;<i class="fa fa-home"></i>&#8202;</button>
+        <button id="login" onclick="window.location.href='/rooms'" type="submit">Rooms</button>
+        <button id="login" onclick="window.open('https\:\/\/vrvsvr.com/docs', '_blank')">Docs</button>
+
+      </div>
+    </div>
+    <div class="name-text" id="start-button">    
+    </div>
+    
+    <div class="bg-rooms-text" id="start-button">    
+      <p id="create-button" class="menu btn-custom btn-large" name="Start Quest"><b>Game Servers</b></p>
+      <!-- a table with column: name, code, players, status, stars, created time, last updated time -->
+
+      <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'Active')" id="active">Active</button>
+        <button class="tablinks" onclick="openTab(event, 'Published')" id="published">Published</button>
+        <button class="tablinks" onclick="openTab(event, 'Private')" id="private">My Rooms</button>
+      </div>
+
+      <div id="Active" class="tabcontent">
+      <table class="rooms-table">
+        <tr>
+          <th>Game Mode</th>
+          <th>Code</th>
+          <th>Players</th>
+          <th>Status</th>
+          <th>Stars</th>
+          <th>Created Time</th>
+          <th>Version</th>
+          <th>Controls</th>
+        </tr>
+        {{range $i,$name := .names }}
+        {{ $CreationTimestamp := index $.CreationTimestamps $i }}
+        {{ $podState := index $.podStates $i }}
+        <tr>
+          <td>Quest</td>
+          <td>{{ $name }}</td>
+          <td>1</td>
+          <td>{{ $podState }}</td>
+          <td>5</td>
+          <td>{{ $CreationTimestamp }}</td>
+          <td>1.0</td>
+          <td><button onclick="openRoom('{{ $name }}')">ACCESS</button><button onclick="shutdownRoom('{{ $name }}')">DELETE</button></td>
+        </tr>
+        {{ end }}
+      </table>
+      </div>
+
+      <div id="Published" class="tabcontent">
+      <table class="rooms-table">
+        <tr>
+          <th>Name</th>
+          <th>Game Mode</th>
+          <th>Stars</th>
+          <th>Owner</th>
+          <th>Created</th>
+          <th>Updated</th>
+          <th>Version</th>
+          <th>Controls</th>
+        </tr>
+      </table>
+        <p><b>Under Construction!</b></p>
+        </div>
+
+        <div id="Private" class="tabcontent">
+          <table class="rooms-table">
+            <tr>
+              <th>Name</th>
+              <th>Game Mode</th>
+              <th>Public</th>
+              <th>Stars</th>
+              <th>Created Time</th>
+              <th>Version</th>
+              <th>Controls</th>
+            </tr>
+          </table>
+          <p><b>Under Construction!</b></p>
+        </div>
+  
+    </div>
+
+</div>
+<script>
+    function openRoom(name) {
+    // window.open(window.location.href='/'+name, "_blank");
+    window.open(location.protocol+'//'+location.host+'/'+name, "_blank");
+    }
+    function shutdownRoom(name) {
+    // window.open(window.location.href='/'+name, "_blank");
+    window.open(location.protocol+'//'+location.host+'/'+name+'/shutdown', "_blank");
+    }
+    // Get window location href hash
+    var hash = window.location.href.split('#')[1];
+    // If hash exists, click the corresponding tab
+    // If window.location.hash changes
+    // window.onhashchange = function() {
+    //   if (hash) {
+    //     console.log("click")
+    //     document.getElementById(hash).click();
+    //   }
+    // };
+
+    if (hash) {
+      // console.log(hash)
+      document.getElementById(hash).click();
+    } else {
+      // Otherwise, click the default tab
+      document.getElementById("active").click();
+    }
+
+</script>
+</body>
+</html>
+
