@@ -18,8 +18,8 @@ Here is a description of each file:
 To get started with the project, you will need to:
 
 1. Install VirtualBox
-1. Download docker and kubectl executables
 1. Configure k8s cluster on minikube or Ubuntu
+1. Download and configure docker and kubectl executables
 1. Generate certificates
 
 **NOTE:** docker locally is used only as a client to connect to a Virtual Machine using context
@@ -49,7 +49,7 @@ To get started with the project, you will need to:
     ```
 
 
-# Option 2: Configuring Ubuntu
+## Option 2: Configuring Ubuntu
 
 1. Download Ubuntu 20.04 OVA image:
     ```
@@ -141,19 +141,31 @@ To get started with the project, you will need to:
     kubectl apply --server-side -f https://raw.githubusercontent.com/googleforgames/agones/release-1.37.0/install/yaml/install.yaml
     kubectl wait --namespace agones-system --for=condition=ready pods --all --timeout=120s
     ```
-1. Remote connection 
-    ``` bash
-    docker context create server --docker "host=ssh://root@192.168.88.199"
-    docker context use server
-    scp root@192.168.88.199:/root/.kube/config %APPDATA%\..\..\.kube\config
-    ```
-1. Build agones-game-launcher
-    ``` bash
-    set startTime=%time%
-    set GOOS=linux
-    go build -v -o main
-    docker build -t agones-game-launcher .
-    ssh root@192.168.88.199 ^
-    ^"docker save agones-game-launcher -o agones-game-launcher.tar ^&^&^
-    ctr -n=k8s.io images import agones-game-launcher.tar^" && echo Start Time: %startTime% && echo Finish time: %time% && kubectl delete -f pod.yaml && kubectl apply -f pod.yaml
-    ```
+
+## Download and configure docker and kubectl executables
+Local executables should be configured for remote connection  
+``` bash
+docker context create server --docker "host=ssh://root@192.168.88.199"
+docker context use server
+scp root@192.168.88.199:/root/.kube/config %APPDATA%\..\..\.kube\config
+```
+
+## Generate certificates
+``` Bash
+cd certs-ssl
+openssl genrsa -des3 -out server.key 2048
+openssl rsa -in server.key -out server.key
+openssl req -sha256 -new -key server.key -out server.csr -subj "/CN=localhost"
+openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+```
+
+## Build agones-game-launcher
+``` bash
+set startTime=%time%
+set GOOS=linux
+go build -v -o main
+docker build -t agones-game-launcher .
+ssh root@192.168.88.199 ^
+^"docker save agones-game-launcher -o agones-game-launcher.tar ^&^&^
+ctr -n=k8s.io images import agones-game-launcher.tar^" && echo Start Time: %startTime% && echo Finish time: %time% && kubectl delete -f pod.yaml && kubectl apply -f pod.yaml
+```
