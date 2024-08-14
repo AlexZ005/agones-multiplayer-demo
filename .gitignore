@@ -1,4 +1,3 @@
-game-launcher/certs/server.crt
-game-launcher/certs/server.key
+certs/
 main*
 config

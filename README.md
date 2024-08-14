@@ -182,9 +182,53 @@ cp %APPDATA%\..\..\.minikube\profiles\minikube\client.key .
 set startTime=%time%
 go mod init && go mod tidy
 cd game-launcher
+copy %APPDATA%\..\..\.kube\config .\
 set GOARCH=amd64&& set GOOS=linux&& go build -v -o main
 docker build -t game-launcher .
 ssh root@192.168.88.199 ^
  ^"docker save game-launcher -o game-launcher.tar ^&^&^
  ctr -n=k8s.io images import game-launcher.tar^" && echo Start Time: %startTime% && echo Finish time: %time% && kubectl delete -f launcher.yaml && kubectl apply -f launcher.yaml
 ```
+
+## Build go-chatroom-app
+``` bash
+set startTime=%time%
+go mod init && go mod tidy
+cd go-chatroom-app
+set GOARCH=amd64&& set GOOS=linux&& go build -v -o main
+docker build -t go-chatroom-app .
+ssh root@192.168.88.199 ^
+ ^"docker save go-chatroom-app -o go-chatroom-app.tar ^&^&^
+ ctr -n=k8s.io images import go-chatroom-app.tar^" && echo Start Time: %startTime% && echo Finish time: %time%
+```
+
+
+# Configure Ingress for agones-game-launcher
+    ``` bash
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.8.2/deploy/static/provider/cloud/deploy.yaml
+    kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=120s
+    kubectl apply -f pod.yaml #agones-game-launcher
+    curl -k --resolve agones.local.dev:443:127.0.0.1 https://agones.local.dev
+    ```
+
+# Configure MetalLB
+    ``` bash
+    # see what changes would be made, returns nonzero returncode if different
+    kubectl get configmap kube-proxy -n kube-system -o yaml | \
+    sed -e "s/strictARP: false/strictARP: true/" | \
+    kubectl diff -f - -n kube-system
+
+    # actually apply the changes, returns nonzero returncode on errors only
+    kubectl get configmap kube-proxy -n kube-system -o yaml | \
+    sed -e "s/strictARP: false/strictARP: true/" | \
+    kubectl apply -f - -n kube-system
+    
+    kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.12/config/manifests/metallb-native.yaml
+    ```
+
+# Apply MetalLB. This would apply EXTERNAL-IP for nginx-ingress
+    ``` bash
+    kubectl -apply MetalLB.yaml
+    kubectl get svc ingress-nginx-controller -n ingress-nginx
+    ```
+

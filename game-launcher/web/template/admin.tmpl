@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Game Server Create</title>
+  <link rel="stylesheet" href="/static/style.css">
+
+  <p id="login">
+  {{if .nickname}}
+    <a href="/user" id="login">{{ .nickname }}</a>
+    <a href="/logout" id="login" >Logout</a>
+  {{else}}
+    <a id="login" href="/login">Login</a>
+  {{end}}
+  </p>
+
+
+</head>
+<body>
+  <h1>Game Server Create</h1>
+
+
+  <p id="room-code">
+  <input type="text" id="game-room-code" placeholder="Enter game room code">
+  <button type="button" name="Join" id="join-button">JOIN</button>
+  </p>
+  <button onclick="createGameServer(this.name)" class="menu" name="Chat Room">Chat Room</button>
+  <button onclick="createGameServer(this.name)" class="menu" name="Adventure Game">Adventure Game</button>
+  <button onclick="createGameServer(this.name)" class="menu" name="Guess the Number">Guess the Number</button>
+  <button onclick="createGameServer(this.name)" class="menu" name="Go ping">Go ping</button>
+  <button onclick="createGameServer(this.name)" class="menu" name="Test">Test</button>
+
+  <p id="border"></p>
+  <p id="status"></p>
+  <p id="game-details" style="display: none;">
+  <button target="_blank" id="access-room" disabled>Access</a>
+  <button target="_blank" id="shutdown-room" disabled>Shutdown</button>
+  </p>
+
+  <script>
+    function createGameServer(name) {
+      document.getElementById('status').innerHTML = "Creating game server..."
+      buttonsStatus(true);
+      fetch('/create-game-server', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: name
+        })
+      }).then(response => response.json()).then(data => {
+        const gamePort = data;
+        document.getElementById('status').innerHTML = "The game server <span id=\"game-port\">"+gamePort+"</span> &#x1f4cb;  has been created.";
+        var a = document.getElementById('access-room'); //or grab it by tagname etc
+        var b = document.getElementById('shutdown-room'); //or grab it by tagname etc
+        a.disabled = false;
+        b.disabled = false;
+        a.style.backgroundColor = "#4CAF50";
+        a.style.color = "white";
+        a.style.border = "1px solid #4CAF50";
+        b.style.backgroundColor = "#f44336";
+        b.style.color = "white";
+        b.style.border = "1px solid #f44336";
+
+        // Add code to copy into the clipboard game-port value
+        gamePortElement = document.getElementById('game-port');
+        gamePortElement.addEventListener('click', () => {
+          navigator.clipboard.writeText(window.location.href+"/"+gamePortElement.textContent);
+          gamePortElement.style.backgroundColor = "#00ff00";
+          setTimeout(() => {
+            gamePortElement.style.backgroundColor = "#fff";
+          }, 1000);
+        });
+
+        document.getElementById('game-details').style.display = 'block';
+        console.log(data);
+      });
+    }
+
+    const joinButton = document.getElementById("join-button");
+    // console.log(joinButton);
+    joinButton.addEventListener("click", () => {
+      window.location.href = "/" + document.getElementById("game-room-code").value;
+    });
+
+    const accessButton = document.getElementById("access-room");
+    // console.log(joinButton);
+    accessButton.addEventListener("click", () => {
+      window.open(window.location.href + "/" + document.getElementById("game-port").textContent);
+    });
+
+    const shutdownButton = document.getElementById("shutdown-room");
+    // console.log(joinButton);
+    shutdownButton.addEventListener("click", () => {
+      window.open(window.location.href + "/" + document.getElementById("game-port").textContent + "/shutdown");
+      var a = document.getElementById('access-room'); //or grab it by tagname etc
+      var b = document.getElementById('shutdown-room'); //or grab it by tagname etc
+
+      a.disabled = true;
+      a.style.backgroundColor = "#ccc";
+      a.style.color = "#666";
+      a.style.border = "1px solid #ccc";
+      b.disabled = true;
+      b.style.backgroundColor = "#ccc";
+      b.style.color = "#666";
+      b.style.border = "1px solid #ccc";
+
+      document.getElementById('game-details').style.display = 'block';
+      document.getElementById('status').innerHTML = "The game server " + document.getElementById("game-port").textContent + " has been shutdown.";
+      buttonsStatus(false);
+    });
+
+    function buttonsStatus(condition) {
+      buttons = document.getElementsByClassName('menu')
+      for (var i = 0; i < buttons.length; i++) {
+        if(condition){
+          buttons.item(i).style.backgroundColor = "#ccc";
+          buttons.item(i).style.color = "#666";
+        }
+        else {
+          buttons.item(i).style.backgroundColor = "#000";
+          buttons.item(i).style.color = "white";
+        }
+        buttons.item(i).disabled = condition;
+      }
+    }
+  </script>
+</body>
+</html>
+

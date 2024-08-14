@@ -127,6 +127,7 @@ func main() {
 
 	router.GET("/", indexHandler)
 	router.GET("/rooms", roomsHandler)
+	router.GET("/admin", adminHandler)
 	router.POST("/create-game-server", createServerHandler)
 
 	router.RunTLS(":443", "certs/server.crt", "certs/server.key")
@@ -145,6 +146,22 @@ func indexHandler(ctx *gin.Context) {
 		})
 	} else {
 		ctx.HTML(http.StatusOK, "index.tmpl", profile)
+	}
+
+}
+
+func adminHandler(ctx *gin.Context) {
+	// Generate a random number between 1 and 100.
+	// randomNumber := rand.Intn(100) + 1
+	session := sessions.Default(ctx)
+	profile := session.Get("profile")
+	if profile == nil {
+		// ctx.Redirect(http.StatusSeeOther, "/")
+		ctx.HTML(http.StatusOK, "admin.tmpl", gin.H{
+			"title": "success",
+		})
+	} else {
+		ctx.HTML(http.StatusOK, "admin.tmpl", profile)
 	}
 
 }

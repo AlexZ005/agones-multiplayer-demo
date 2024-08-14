@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Go Chatroom</title>
+  <!-- <meta http-equiv="Upgrade" content="websocket"> -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script>
+    $(function() {
+      // Get the WebSocket connection.
+      var windowLocation = window.location, wsuri
+      if (windowLocation.protocol === "https:") {
+          wsuri = "wss:"
+      } else {
+          wsuri = "ws:"
+      }
+
+      wsuri += "//" + windowLocation.host
+      wsuri += windowLocation.pathname + "/websocket"
+
+      var socket = new WebSocket(wsuri);
+
+      // Handle messages from the WebSocket connection.
+      socket.onmessage = function(event) {
+        // Add the message to the chat window.
+        $("#messages").append($("<li>").text(event.data));
+      };
+
+      // Handle errors from the WebSocket connection.
+      socket.onerror = function(event) {
+        // Display an error message.
+        $("#messages").append($("<li>").text("Error: " + event.data));
+      };
+
+      // Handle the WebSocket connection closing.
+      socket.onclose = function() {
+        // Display a message that the connection has closed.
+        $("#messages").append($("<li>").text("Connection closed"));
+      };
+
+      // Send a message to the WebSocket connection.
+      $("#send").click(function() {
+        // Get the message from the input field.
+        var message = $("#message").val();
+
+        // Send the message to the WebSocket connection.
+        socket.send(message);
+      });
+      $(document).on("keydown", "#message", function(event) {
+        if (event.which == 13) {
+            // Get the message from the input field.
+            var message = $("#message").val();
+
+            // Send the message to the WebSocket connection.
+            socket.send(message);
+        }
+      });
+    });
+  </script>
+</head>
+<body>
+  <h1>Go Chatroom</h1>
+  <ul id="messages"></ul>
+  <p>
+    <input type="text" id="message">
+    <input type="button" id="send" value="Send">
+  </p>
+</body>
+</html>
